@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app:
+    image: tc_fiap_blogging_back_end-app:latest
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - db
+    env_file:
+      - .env.docker
+
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: FIAP
+    volumes:
+      - ./FIAP.sql:/docker-entrypoint-initdb.d/FIAP.sql      
+    ports:
+      - "5432:5432"
