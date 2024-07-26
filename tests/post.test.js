@@ -21,8 +21,8 @@ describe('User API', () => {
     });
 
     it('should retrieve an existing post by id', async () => {
-        const postData = { id: 20, titulo: 'Titulo_20', descricao: 'Descricao_20', imagem: null};
-        const postId = 20;
+        const postData = { id: 1, titulo: 'Titulo_01', descricao: 'Descricao_01', imagem: null};
+        const postId = 1;
 
         const res = await request(app).get(`/api/posts/${postId}`);
         expect(res.statusCode).toBe(200);

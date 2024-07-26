@@ -1,53 +1,109 @@
+
 # PosTech
 
-Destinados a projetos de estudos
+Projeto para a pós da fiap, back end de uma aplicação para posts destinado a alunos e professores. Para essse projeto utilizamos as seguintes tecnologias:
 
-# Repositorio Git
 
-[text](https://github.com/techchallengegroup28/TechChallengeFase2.git)
+**Back-end:**
+- Node.js
+- Express
 
-Como executar o projeto
+**Banco de Dados:**
+- Postgres
+- Sequelize
 
-1 -> Abrir o projeto pelo VS Code
+**Testes:**
+- Jest
+- Supertest
 
-2 -> Dentro do diretório principal ...\TechChallengeFase2 executar o npm install
+**Documentação:**
+- Swagger
 
-Executando o docker localmente a parti dos comandos abaixo
-Atenção é necessario que o docker esteja em execução no windows
+**CI/CD:**
+- Docker
+- GitHub Actions
 
-Dentro do diretório principal ...\TechChallengeFase2 executar
+## Instalação
 
-1 -> docker-compose build
+[Repositorio](https://github.com/techchallengegroup28/TechChallengeFase2.git)
 
-2 -> docker-compose up -d "Ambiente de dev"
-2.1 -> docker-compose up --build "Ambiente de produção"
+Ao baixar o projeto navegue até o diretorio principal
 
-Isso irá executar as imagens da aplicação e banco de dados, ao finalizar o processo
-a aplicação está funcionando no link
+E instale as dependencias:
 
-http://localhost:3000/
+```bash
+  npm install
+```
+    
+Agora vamos subir o banco inicial e executar o Docker. Para isso lembre de deixar o Docker executando no windows e execute os seguintes comandos:
 
-O postgres estara iniciado com o banco de dados FIAP criado e a tabela post criada contendo 10 registros para testes na api.
+Faça o build do Docker para construir as imagens definidas no `docker-compose.yml`
+```bash
+  docker-compose build
+```
 
-Comandos Docker
+Para criar o ambiente de desenvolvimento, execute o comando abaixo. Isso irá iniciar os contêineres, criar o banco de dados FIAP, criar a tabela post, fazer a inserção inicial dos dados e criar um contêiner do banco de dados:
+```bash
+  docker-compose up -d
+```
 
---Criar uma imagem
-docker build -t Nome_da_Imagem:tag .
+Para o ambiente de produção utilize 
+```bash
+  docker-compose up --build
+```
 
---Para os contêineres em execução e deletar
-docker-compose down
+A aplicação pode ser vista na URL
+[http://localhost:3000/](http://localhost:3000/)
+## Rodando os testes
 
---Listar as imagens docker
-docker images
+Para rodar os testes, rode o seguinte comando no terminal
 
---Remover imagens
-docker rmi <id_imagem>
+```bash
+  npm test
+```
 
---Baixa uma imagem de um repositorio
-docker pull Seu_Repositorio/Nome_da_imagem:lasted
+## Visualizando a documentação
 
---Cria tag para uma imagen docker
-docker tag postgres:latest Seu_Repositorio/postgres:latest
+Para visualizar a cocumentação interativa com Swagger 
+[http://localhost:3000/api-docs/](http://localhost:3000/api-docs/)
 
---Realizar o push para o repositório remoto
-docker push Seu_Repositoriov/postgres:latest
+## Informações complementares
+
+O CI/CD está configurado através do arquivo `min.yml`, fazendo o push na branch `main` é criado a imagem no site do Docker Hub
+
+## Comandos uteis do Docker
+
+Criar uma imagem
+```bash
+  docker build -t Nome_da_Imagem:tag .
+```
+
+Parar os contêineres em execução e deletar
+```bash
+  docker-compose down
+```
+
+istar as imagens docker
+```bash
+  docker images
+```
+
+Remover imagens
+```bash
+  docker rmi <id_imagem>
+```
+
+Baixar uma imagem de um repositorio
+```bash
+  docker pull Seu_Repositorio/Nome_da_imagem:lasted
+```
+
+Cria tag para uma imagen docker
+```bash
+  docker tag postgres:latest Seu_Repositorio/postgres:latest
+```
+
+Realizar o push para o repositório remoto
+```bash
+  docker push Seu_Repositoriov/postgres:latest
+```
