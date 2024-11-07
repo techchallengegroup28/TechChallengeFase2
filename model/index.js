@@ -1,17 +1,17 @@
 const Usuario = require("./User");
-const TipoUsuario = require("./UserType");
+const tipo_usuario = require("./UserType");
 
-Usuario.belongsTo(TipoUsuario, {
-  foreignKey: "tipoUsuarioID",
-  as: "tipoUsuario",
+Usuario.belongsTo(tipo_usuario, {
+  foreignKey: "tipo_usuario_id",
+  as: "tipo_usuario",
 });
 
-TipoUsuario.hasMany(Usuario, {
-  foreignKey: "tipoUsuarioID",
+tipo_usuario.hasMany(Usuario, {
+  foreignKey: "tipo_usuario_id",
   as: "usuarios",
 });
 
 module.exports = {
   Usuario,
-  TipoUsuario,
+  tipo_usuario,
 };

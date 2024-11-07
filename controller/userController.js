@@ -1,5 +1,5 @@
 const Usuario = require("../model/User");
-const TipoUsuario = require("../model/UserType.js");
+const tipoUsuario = require("../model/UserType.js");
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 
@@ -7,9 +7,9 @@ module.exports = class userController {
   // Função auxiliar para excluir o campo 'senha' e incluir o tipo de usuário
   static async formatUserResponse(user) {
     const { senha, ...userData } = user.dataValues;
-    if (userData.tipoUsuarioID) {
-      const tipoUsuario = await TipoUsuario.findByPk(userData.tipoUsuarioID);
-      userData.tipoUsuario = tipoUsuario ? tipoUsuario.nometipo : null;
+    if (userData.tipo_usuario_id) {
+      const tipo_usuario = await tipoUsuario.findByPk(userData.tipo_usuario_id);
+      userData.tipo_usuario = tipo_usuario ? tipo_usuario.nome_tipo : null;
     }
     return userData;
   }
@@ -39,7 +39,7 @@ module.exports = class userController {
 
       const authenticatedUser = req.user;
 
-      const isProfessor = authenticatedUser.tipoUsuario === "professor";
+      const isProfessor = authenticatedUser.tipo_usuario === "professor";
       const isSameUser = authenticatedUser.id === requestedUserId;
 
       if (!isProfessor && !isSameUser) {
@@ -68,7 +68,7 @@ module.exports = class userController {
   static async novo(req, res) {
     const dados = req.body;
 
-    if (!dados.nome || !dados.email || !dados.senha || !dados.tipoUsuarioID) {
+    if (!dados.nome || !dados.email || !dados.senha || !dados.tipo_usuario_id) {
       res.status(400).json("Usuário não criado! Faltam dados.");
     } else {
       const existingUser = await Usuario.findOne({
@@ -84,7 +84,7 @@ module.exports = class userController {
         nome: dados.nome,
         email: dados.email,
         senha: hashedPassword,
-        tipoUsuarioID: dados.tipoUsuarioID,
+        tipo_usuario_id: dados.tipo_usuario_id,
       };
 
       await Usuario.create(novoUsuario);

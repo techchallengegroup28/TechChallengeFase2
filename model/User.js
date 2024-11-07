@@ -22,7 +22,7 @@ const Usuario = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    tipoUsuarioID: {
+    tipo_usuario_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       field: "tipo_usuario_id",

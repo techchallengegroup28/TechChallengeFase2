@@ -1,15 +1,15 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/database");
 
-const TipoUsuario = sequelize.define(
-  "TipoUsuario",
+const tipo_usuario = sequelize.define(
+  "tipo_usuario",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    nomeTipo: {
+    nome_tipo: {
       type: DataTypes.STRING(100),
       allowNull: false,
       field: "nome_tipo",
@@ -22,4 +22,4 @@ const TipoUsuario = sequelize.define(
   }
 );
 
-module.exports = TipoUsuario;
+module.exports = tipo_usuario;

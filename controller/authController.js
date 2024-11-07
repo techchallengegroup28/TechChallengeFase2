@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { Usuario, TipoUsuario } = require("../model");
+const { Usuario, tipo_usuario } = require("../model");
 
 module.exports = class authController {
   static async login(req, res) {
@@ -9,7 +9,7 @@ module.exports = class authController {
     try {
       const usuario = await Usuario.findOne({
         where: { email },
-        include: [{ model: TipoUsuario, as: "tipoUsuario" }],
+        include: [{ model: tipo_usuario, as: "tipo_usuario" }],
       });
 
       if (!usuario) {
@@ -25,15 +25,17 @@ module.exports = class authController {
       const tokenPayload = {
         id: usuario.id,
         email: usuario.email,
-        tipoUsuarioID: usuario.tipoUsuarioID,
-        tipoUsuario: usuario.tipoUsuario ? usuario.tipoUsuario.nomeTipo : null,
+        tipo_usuario_id: usuario.tipo_usuario_id,
+        tipo_usuario: usuario.tipo_usuario
+          ? usuario.tipo_usuario.nome_tipo
+          : null,
       };
 
       const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
 
-      res.json({ accessToken });
+      res.json({ access_token: accessToken });
     } catch (error) {
       console.error("Erro ao realizar login:", error);
       res.status(500).json({ error: "Erro ao realizar login." });

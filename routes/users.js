@@ -33,9 +33,9 @@ const authorizeRoles = require("../middlewares/authorizeRoles");
  *                     type: string
  *                   email:
  *                     type: string
- *                   tipoUsuarioID:
+ *                   tipo_usuario_id:
  *                     type: integer
- *                   tipoUsuario:
+ *                   tipo_usuario:
  *                     type: string
  */
 router.get(
@@ -72,9 +72,9 @@ router.get(
  *                   type: string
  *                 email:
  *                   type: string
- *                 tipoUsuarioID:
+ *                 tipo_usuario_id:
  *                   type: integer
- *                 tipoUsuario:
+ *                 tipo_usuario:
  *                   type: string
  *       404:
  *         description: Usuário não encontrado
@@ -100,7 +100,7 @@ router.get("/:id", authenticateToken, userController.single);
  *                 type: string
  *               senha:
  *                 type: string
- *               tipoUsuarioID:
+ *               tipo_usuario_id:
  *                 type: integer
  *     responses:
  *       201:
@@ -141,7 +141,7 @@ router.post(
  *                 type: string
  *               senha:
  *                 type: string
- *               tipoUsuarioID:
+ *               tipo_usuario_id:
  *                 type: integer
  *     responses:
  *       200:
