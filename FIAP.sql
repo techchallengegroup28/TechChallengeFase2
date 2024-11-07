@@ -1,3 +1,23 @@
+CREATE TABLE user_types (
+    id SERIAL PRIMARY KEY,
+    nome_tipo VARCHAR(100) NOT NULL
+);
+
+INSERT INTO user_types (nome_tipo) VALUES ('professor');
+INSERT INTO user_types (nome_tipo) VALUES ('aluno');
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(100) NOT NULL,
+    tipo_usuario_id INTEGER NOT NULL,
+    FOREIGN KEY (tipo_usuario_id) REFERENCES user_types(id)
+);
+
+INSERT INTO users (nome, email, senha, tipo_usuario_id)
+VALUES ('Admin', 'admin@admin.com', '$2b$10$vjHhtuXaZUvqgX7eLli2keOOiLTXEfauMhT9Avl4SOSQ36L5RiI4.', 1); -- senha: admin
+
 CREATE TABLE Post (
     ID SERIAL PRIMARY KEY,
     Titulo VARCHAR(200) NOT NULL,

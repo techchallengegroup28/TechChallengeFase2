@@ -1,22 +1,42 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const { Usuario, TipoUsuario } = require("../model");
 
-// Função para autenticar o usuário e gerar o token
 module.exports = class authController {
   static async login(req, res) {
-    const { email, password } = req.body;
+    const { email, senha } = req.body;
 
-    if (
-      (email === "admin@email.com" || email === "professor@email.com") &&
-      password === "123456"
-    ) {
-      const user = { email };
+    try {
+      const usuario = await Usuario.findOne({
+        where: { email },
+        include: [{ model: TipoUsuario, as: "tipoUsuario" }],
+      });
 
-      const accessToken = jwt.sign(user, process.env.JWT_SECRET, {
+      if (!usuario) {
+        return res.status(400).json({ error: "Credenciais inválidas." });
+      }
+
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+      if (!senhaValida) {
+        return res.status(400).json({ error: "Credenciais inválidas." });
+      }
+
+      const tokenPayload = {
+        id: usuario.id,
+        email: usuario.email,
+        tipoUsuarioID: usuario.tipoUsuarioID,
+        tipoUsuario: usuario.tipoUsuario ? usuario.tipoUsuario.nomeTipo : null,
+      };
+
+      const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
+
       res.json({ accessToken });
-    } else {
-      res.status(401).send("Credenciais inválidas");
+    } catch (error) {
+      console.error("Erro ao realizar login:", error);
+      res.status(500).json({ error: "Erro ao realizar login." });
     }
   }
 };

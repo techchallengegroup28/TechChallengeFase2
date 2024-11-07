@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const postController = require("../controller/postController");
+const authenticateToken = require("../middlewares/authenticateToken");
+const authorizeRoles = require("../middlewares/authorizeRoles");
 
 /**
  * @swagger
@@ -79,7 +81,12 @@ router.get("/", postController.main);
  *                     type: string
  *                     format: binary
  */
-router.get("/admin", postController.admin);
+router.get(
+  "/admin",
+  authenticateToken,
+  authorizeRoles("professor"),
+  postController.admin
+);
 
 /**
  * @swagger
@@ -195,7 +202,12 @@ router.get("/:id", postController.single);
  *       400:
  *         description: Post não criado! Faltam dados.
  */
-router.post("/", postController.novo);
+router.post(
+  "/",
+  authenticateToken,
+  authorizeRoles("professor"),
+  postController.novo
+);
 
 /**
  * @swagger
@@ -230,7 +242,12 @@ router.post("/", postController.novo);
  *       200:
  *         description: Post atualizado com sucesso
  */
-router.put("/:id", postController.atualizar);
+router.put(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("professor"),
+  postController.atualizar
+);
 
 /**
  * @swagger
@@ -249,6 +266,11 @@ router.put("/:id", postController.atualizar);
  *       200:
  *         description: Post excluído com sucesso
  */
-router.delete("/:id", postController.delete);
+router.delete(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("professor"),
+  postController.delete
+);
 
 module.exports = router;

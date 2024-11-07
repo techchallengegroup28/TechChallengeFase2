@@ -1,4 +1,3 @@
-const authenticateToken = require("../middlewares/authenticateTokenMiddleware");
 const Post = require("../model/Post");
 const { Op } = require("sequelize");
 
@@ -36,88 +35,75 @@ module.exports = class postController {
 
   //Rota para criar novo post (admin)
   static async novo(req, res) {
-    authenticateToken(req, res, async () => {
-      const dados = req.body;
+    const dados = req.body;
 
-      const data = new Date();
-      const dia = String(data.getDate()).padStart(2, "0");
-      const mes = String(data.getMonth() + 1).padStart(2, "0");
-      const ano = data.getFullYear();
+    const data = new Date();
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const ano = data.getFullYear();
 
-      if (
-        !dados.titulo ||
-        !dados.descricao ||
-        !dados.conteudo ||
-        !dados.imagem
-      ) {
-        res.json("Post não criado! Faltam dados.");
-      } else {
-        const imagemBinaria = Buffer.from(dados.imagem, "base64");
+    if (!dados.titulo || !dados.descricao || !dados.conteudo || !dados.imagem) {
+      res.json("Post não criado! Faltam dados.");
+    } else {
+      const imagemBinaria = Buffer.from(dados.imagem, "base64");
 
-        const novo = {
-          titulo: dados.titulo,
-          descricao: dados.descricao,
-          conteudo: dados.conteudo,
-          imagem: imagemBinaria,
-          datapostagem: `${ano}-${mes}-${dia}`,
-        };
+      const novo = {
+        titulo: dados.titulo,
+        descricao: dados.descricao,
+        conteudo: dados.conteudo,
+        imagem: imagemBinaria,
+        datapostagem: `${ano}-${mes}-${dia}`,
+      };
 
-        await Post.create(novo);
+      await Post.create(novo);
 
-        res.json("Post Criado com Sucesso!");
-      }
-    });
+      res.json("Post Criado com Sucesso!");
+    }
   }
 
   //Rota para atualizar post (admin)
   static async atualizar(req, res) {
-    authenticateToken(req, res, async () => {
-      const dados = req.body;
-      const id = req.params.id;
+    const dados = req.body;
+    const id = req.params.id;
 
-      const data = new Date();
-      const dia = String(data.getDate()).padStart(2, "0");
-      const mes = String(data.getMonth() + 1).padStart(2, "0");
-      const ano = data.getFullYear();
+    const data = new Date();
+    const dia = String(data.getDate()).padStart(2, "0");
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const ano = data.getFullYear();
 
-      if (dados.imagem) {
-        dados.imagem = Buffer.from(dados.imagem, "base64");
-      }
+    if (dados.imagem) {
+      dados.imagem = Buffer.from(dados.imagem, "base64");
+    }
 
-      const update = {
-        titulo: dados.titulo,
-        descricao: dados.descricao,
-        conteudo: dados.conteudo,
-        imagem: dados.imagem,
-        dataatualizacao: `${ano}-${mes}-${dia}`,
-      };
+    const update = {
+      titulo: dados.titulo,
+      descricao: dados.descricao,
+      conteudo: dados.conteudo,
+      imagem: dados.imagem,
+      dataatualizacao: `${ano}-${mes}-${dia}`,
+    };
 
-      await Post.update(update, { where: { id: id } });
+    await Post.update(update, { where: { id: id } });
 
-      res.json("Post Atualizado com sucesso!");
-    });
+    res.json("Post Atualizado com sucesso!");
   }
 
   //Rota para pegar todos os posts (admin)
   static async admin(req, res) {
-    authenticateToken(req, res, async () => {
-      let listPosts = await Post.findAll();
+    let listPosts = await Post.findAll();
 
-      listPosts = listPosts.map((post) => {
-        return convertImagesToBase64(post);
-      });
-
-      res.json(listPosts);
+    listPosts = listPosts.map((post) => {
+      return convertImagesToBase64(post);
     });
+
+    res.json(listPosts);
   }
 
   //Rota para excluir post (admin)
   static async delete(req, res) {
-    authenticateToken(req, res, async () => {
-      const id = req.params.id;
-      await Post.destroy({ where: { id: id } });
-      res.json("Post Deletado com Sucesso!");
-    });
+    const id = req.params.id;
+    await Post.destroy({ where: { id: id } });
+    res.json("Post Deletado com Sucesso!");
   }
 
   //Rota para pesquisa de posts (não admin)
