@@ -24,6 +24,7 @@ module.exports = class authController {
 
       const tokenPayload = {
         id: usuario.id,
+        nome: usuario.nome,
         email: usuario.email,
         tipo_usuario_id: usuario.tipo_usuario_id,
         tipo_usuario: usuario.tipo_usuario
@@ -31,9 +32,7 @@ module.exports = class authController {
           : null,
       };
 
-      const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
+      const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET);
 
       res.json({ access_token: accessToken });
     } catch (error) {

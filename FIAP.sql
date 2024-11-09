@@ -3,8 +3,8 @@ CREATE TABLE user_types (
     nome_tipo VARCHAR(100) NOT NULL
 );
 
-INSERT INTO user_types (nome_tipo) VALUES ('professor');
-INSERT INTO user_types (nome_tipo) VALUES ('aluno');
+INSERT INTO user_types (nome_tipo) VALUES ('professor'); -- id: 1
+INSERT INTO user_types (nome_tipo) VALUES ('aluno'); -- id: 2
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
