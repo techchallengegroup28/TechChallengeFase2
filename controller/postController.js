@@ -28,7 +28,7 @@ module.exports = class postController {
   //Rota para pegar um post em especifico (não admin)
   static async single(req, res) {
     let post = await Post.findByPk(parseInt(req.params.id));
-    if (!post) return res.status(404).send("Post não encontrado.");
+    if (!post) return res.status(404).send({ error: "Post não encontrado." });
     post = convertImagesToBase64(post);
     res.json(post);
   }
@@ -43,7 +43,7 @@ module.exports = class postController {
     const ano = data.getFullYear();
 
     if (!dados.titulo || !dados.descricao || !dados.conteudo || !dados.imagem) {
-      res.json("Post não criado! Faltam dados.");
+      res.json({ error: "Post não criado! Faltam dados." });
     } else {
       const imagemBinaria = Buffer.from(dados.imagem, "base64");
 

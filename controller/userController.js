@@ -69,13 +69,13 @@ module.exports = class userController {
     const dados = req.body;
 
     if (!dados.nome || !dados.email || !dados.senha || !dados.tipo_usuario_id) {
-      res.status(400).json("Usuário não criado! Faltam dados.");
+      res.status(400).json({ error: "Usuário não criado! Faltam dados." });
     } else {
       const existingUser = await Usuario.findOne({
         where: { email: dados.email },
       });
       if (existingUser) {
-        return res.status(400).json("Email já está em uso.");
+        return res.status(400).json({ error: "Email já está em uso." });
       }
 
       const hashedPassword = await bcrypt.hash(dados.senha, 10);
@@ -99,14 +99,15 @@ module.exports = class userController {
     const id = req.params.id;
 
     const usuario = await Usuario.findByPk(id);
-    if (!usuario) return res.status(404).send("Usuário não encontrado.");
+    if (!usuario)
+      return res.status(404).send({ error: "Usuário não encontrado." });
 
     if (dados.email) {
       const existingUser = await Usuario.findOne({
         where: { email: dados.email, id: { [Op.ne]: id } },
       });
       if (existingUser) {
-        return res.status(400).json("Email já está em uso.");
+        return res.status(400).json({ error: "Email já está em uso." });
       }
     }
 
@@ -139,7 +140,8 @@ module.exports = class userController {
     const id = req.params.id;
 
     const usuario = await Usuario.findByPk(id);
-    if (!usuario) return res.status(404).send("Usuário não encontrado.");
+    if (!usuario)
+      return res.status(404).send({ error: "Usuário não encontrado." });
 
     await Usuario.destroy({ where: { id: id } });
     res.json("Usuário Deletado com Sucesso!");
