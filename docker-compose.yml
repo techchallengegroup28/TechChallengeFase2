@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -24,6 +24,6 @@ services:
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: FIAP
     volumes:
-      - ./FIAP.sql:/docker-entrypoint-initdb.d/FIAP.sql      
+      - ./FIAP.sql:/docker-entrypoint-initdb.d/FIAP.sql
     ports:
       - "5432:5432"

@@ -1,7 +1,7 @@
 const Usuario = require("../model/User");
 const tipoUsuario = require("../model/UserType.js");
 const { Op } = require("sequelize");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 module.exports = class userController {
   // Função auxiliar para excluir o campo 'senha' e incluir o tipo de usuário
