@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
 
 module.exports = class userController {
-  // Função auxiliar para excluir o campo 'senha' e incluir o tipo de usuário
+  // Função auxiliar para formatar a resposta do usuário
   static async formatUserResponse(user) {
     const { senha, ...userData } = user.dataValues;
     if (userData.tipo_usuario_id) {
@@ -14,22 +14,29 @@ module.exports = class userController {
     return userData;
   }
 
-  // Rota para pegar todos os usuários (admin)
+  // Rota para pegar todos os usuários
   static async main(req, res) {
-    let listUsers = await Usuario.findAll({
-      attributes: { exclude: ["senha"] },
-    });
+    try {
+      let listUsers = await Usuario.findAll({
+        attributes: { exclude: ["senha"] },
+      });
 
-    listUsers = await Promise.all(
-      listUsers.map(async (user) => {
-        return await userController.formatUserResponse(user);
-      })
-    );
+      listUsers = await Promise.all(
+        listUsers.map(async (user) => {
+          return await userController.formatUserResponse(user);
+        })
+      );
 
-    res.json(listUsers);
+      return res.status(200).json(listUsers);
+    } catch (error) {
+      console.error("Erro ao obter usuários:", error);
+      return res
+        .status(500)
+        .json({ error: "Erro ao obter lista de usuários." });
+    }
   }
 
-  // Rota para pegar um usuário específico (não admin, mas só pode acessar seus próprios dados)
+  // Rota para pegar um usuário específico
   static async single(req, res) {
     try {
       const requestedUserId = parseInt(req.params.id, 10);
@@ -57,20 +64,34 @@ module.exports = class userController {
       }
 
       const formattedUser = await userController.formatUserResponse(user);
-      return res.json(formattedUser);
+      return res.status(200).json(formattedUser);
     } catch (error) {
       console.error("Erro ao obter usuário:", error);
-      res.status(500).json({ error: "Erro ao obter usuário." });
+      return res.status(500).json({ error: "Erro ao obter usuário." });
     }
   }
 
-  // Rota para criar novo usuário (admin)
+  // Rota para criar novo usuário
   static async novo(req, res) {
-    const dados = req.body;
+    try {
+      const dados = req.body;
 
-    if (!dados.nome || !dados.email || !dados.senha || !dados.tipo_usuario_id) {
-      res.status(400).json({ error: "Usuário não criado! Faltam dados." });
-    } else {
+      if (
+        !dados.nome ||
+        !dados.email ||
+        !dados.senha ||
+        !dados.tipo_usuario_id
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Usuário não criado! Faltam dados." });
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(dados.email)) {
+        return res.status(400).json({ error: "Email inválido." });
+      }
+
       const existingUser = await Usuario.findOne({
         where: { email: dados.email },
       });
@@ -87,94 +108,97 @@ module.exports = class userController {
         tipo_usuario_id: dados.tipo_usuario_id,
       };
 
-      await Usuario.create(novoUsuario);
+      const createdUser = await Usuario.create(novoUsuario);
+      const responseUser = await userController.formatUserResponse(createdUser);
 
-      res.json("Usuário Criado com Sucesso!");
+      return res.status(201).json(responseUser);
+    } catch (error) {
+      console.error("Erro ao criar usuário:", error);
+      return res.status(500).json({ error: "Erro ao criar usuário." });
     }
   }
 
-  // Rota para atualizar usuário (admin)
+  // Rota para atualizar usuário
   static async atualizar(req, res) {
-    const dados = req.body;
-    const id = req.params.id;
+    try {
+      const dados = req.body;
+      const id = req.params.id;
 
-    const usuario = await Usuario.findByPk(id);
-    if (!usuario)
-      return res.status(404).send({ error: "Usuário não encontrado." });
-
-    if (dados.email) {
-      const existingUser = await Usuario.findOne({
-        where: { email: dados.email, id: { [Op.ne]: id } },
-      });
-      if (existingUser) {
-        return res.status(400).json({ error: "Email já está em uso." });
+      const usuario = await Usuario.findByPk(id);
+      if (!usuario) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
       }
+
+      if (dados.email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(dados.email)) {
+          return res.status(400).json({ error: "Email inválido." });
+        }
+
+        const existingUser = await Usuario.findOne({
+          where: { email: dados.email, id: { [Op.ne]: id } },
+        });
+        if (existingUser) {
+          return res.status(400).json({ error: "Email já está em uso." });
+        }
+      }
+
+      if (dados.senha) {
+        dados.senha = await bcrypt.hash(dados.senha, 10);
+      }
+
+      await usuario.update(dados);
+
+      const updatedUser = await userController.formatUserResponse(usuario);
+
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+      return res.status(500).json({ error: "Erro ao atualizar usuário." });
     }
-
-    if (dados.senha) {
-      dados.senha = await bcrypt.hash(dados.senha, 10);
-    }
-
-    await usuario.update(dados);
-
-    res.json("Usuário Atualizado com sucesso!");
   }
 
-  // Rota para pegar todos os usuários (admin)
-  static async admin(req, res) {
-    let listUsers = await Usuario.findAll({
-      attributes: { exclude: ["senha"] },
-    });
-
-    listUsers = await Promise.all(
-      listUsers.map(async (user) => {
-        return await userController.formatUserResponse(user);
-      })
-    );
-
-    res.json(listUsers);
-  }
-
-  // Rota para excluir usuário (admin)
+  // Rota para excluir usuário
   static async delete(req, res) {
-    const id = req.params.id;
+    try {
+      const id = req.params.id;
 
-    const usuario = await Usuario.findByPk(id);
-    if (!usuario)
-      return res.status(404).send({ error: "Usuário não encontrado." });
+      const usuario = await Usuario.findByPk(id);
+      if (!usuario) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
+      }
 
-    await Usuario.destroy({ where: { id: id } });
-    res.json("Usuário Deletado com Sucesso!");
+      await Usuario.destroy({ where: { id: id } });
+      return res.status(200).json({ message: "Usuário deletado com sucesso!" });
+    } catch (error) {
+      console.error("Erro ao deletar usuário:", error);
+      return res.status(500).json({ error: "Erro ao deletar usuário." });
+    }
   }
 
-  // Rota para pesquisa de usuários (não admin)
+  // Rota para pesquisa de usuários
   static async pesquisa(req, res) {
-    const pesquisa = req.query.buscar;
+    try {
+      const pesquisa = req.query.buscar;
 
-    let users = await Usuario.findAll({
-      where: {
-        [Op.or]: [
-          {
-            nome: {
-              [Op.like]: `%${pesquisa}%`,
-            },
-          },
-          {
-            email: {
-              [Op.like]: `%${pesquisa}%`,
-            },
-          },
-        ],
-      },
-      attributes: { exclude: ["senha"] },
-    });
+      const users = await Usuario.findAll({
+        where: {
+          [Op.or]: [
+            { nome: { [Op.like]: `%${pesquisa}%` } },
+            { email: { [Op.like]: `%${pesquisa}%` } },
+          ],
+        },
+        attributes: { exclude: ["senha"] },
+      });
 
-    users = await Promise.all(
-      users.map(async (user) => {
-        return await userController.formatUserResponse(user);
-      })
-    );
+      const formattedUsers = await Promise.all(
+        users.map(async (user) => await userController.formatUserResponse(user))
+      );
 
-    res.json(users);
+      return res.status(200).json(formattedUsers);
+    } catch (error) {
+      console.error("Erro ao pesquisar usuários:", error);
+      return res.status(500).json({ error: "Erro ao realizar pesquisa." });
+    }
   }
 };
