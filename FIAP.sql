@@ -28,12 +28,12 @@ CREATE TABLE Post (
     Imagem BYTEA
 );
 
-INSERT INTO public.post
-(titulo, descricao, datapostagem, dataatualizacao, conteudo, imagem)
-VALUES('Titulo_01', 'Descricao_01', '2024-09-18 16:07:24.887', '2024-09-18 16:07:24.887', 'Conteudo_01', NULL);
-INSERT INTO public.post
-(titulo, descricao, datapostagem, dataatualizacao, conteudo, imagem)
-VALUES('Titulo_06', 'Descricao_06', '2024-09-18 16:07:24.887', '2024-09-18 16:07:24.887', 'Conteudo_06', NULL);
+-- INSERT INTO public.post
+-- (titulo, descricao, datapostagem, dataatualizacao, conteudo, imagem)
+-- VALUES('Titulo_01', 'Descricao_01', '2024-09-18 16:07:24.887', '2024-09-18 16:07:24.887', 'Conteudo_01', NULL);
+-- INSERT INTO public.post
+-- (titulo, descricao, datapostagem, dataatualizacao, conteudo, imagem)
+-- VALUES('Titulo_06', 'Descricao_06', '2024-09-18 16:07:24.887', '2024-09-18 16:07:24.887', 'Conteudo_06', NULL);
 INSERT INTO public.post
 (titulo, descricao, datapostagem, dataatualizacao, conteudo, imagem)
 VALUES('Dia de Mustang: aceleramos o novo V8 e o Mach-E 100% elétrico na pista', 'Durante nossa visita recente ao centro de desenvolvimento e testes da Ford na cidade de Tatuí, em SP, tivemos a chance imperdível de levar duas feras da gama atual da marca para a pista de testes: o novo Mustang GT e o inédito Mustang Mach-E.', '2024-09-20 00:00:00.000', '2024-09-20 00:00:00.000', 'A ideia inicial, obviamente, era testar a performance dos modelos em um ambiente sem as amarras das ruas, afinal, trata-se de um circuito fechado e monitorado, o que possibilita que o potencial máximo do veículo seja explorado. Além disso, foi a chance de experimentar algumas das soluções tecnológicas disponíveis para ambos.

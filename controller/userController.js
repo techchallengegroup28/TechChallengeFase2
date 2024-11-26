@@ -145,6 +145,8 @@ module.exports = class userController {
 
       if (dados.senha) {
         dados.senha = await bcrypt.hash(dados.senha, 10);
+      } else {
+        dados.senha = usuario.senha;
       }
 
       await usuario.update(dados);
